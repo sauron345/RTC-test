@@ -1,19 +1,20 @@
-import SportEventDataFormat from "./SportEventDataFormat";
+import {SportDataFormat} from "./formats/SportDataFormat";
+import {getDefaultSportDataFormat} from "./utils";
 
 export default class ResponseStateExtractor {
 
-    private readonly encodedText: string
-    private sportEventsStorage: Set<SportEventDataFormat>
-    private sportEventData: SportEventDataFormat
+    private readonly stateData: string[]
+    private sportEventsStorage: Set<SportDataFormat>
+    private sportEventData = getDefaultSportDataFormat()
 
     constructor(encodedText: string) {
-        this.encodedText = encodedText
+        this.stateData = encodedText.split('\n')
     }
 
-    executeAndGetResult(): Set<SportEventDataFormat> {
+    executeAndGetResult(): Set<SportDataFormat> {
         let seperatedSportEventData: string[]
-        for (let sportEventData of this.encodedText.split('\n')) {
-            seperatedSportEventData = sportEventData.split(',')
+        for (const sportEventDataStr of this.stateData) {
+            seperatedSportEventData = sportEventDataStr.split(',')
             this.assignEventFields(seperatedSportEventData)
             this.sportEventsStorage.add(this.sportEventData)
         }
@@ -21,12 +22,12 @@ export default class ResponseStateExtractor {
     }
 
     private assignEventFields(seperatedSportEventData: string[]) {
-        let index = 0
-        for (let field of Object.keys(this.sportEventData)) {
+        let index = 1
+        for (const field of Object.keys(this.sportEventData)) {
             if (field == "scores") {
-                this.sportEventData[field] = seperatedSportEventData[index].split('|')
+                this.sportEventData[field] = seperatedSportEventData[index++].split('|')
             } else {
-                this.sportEventData[field] = seperatedSportEventData[index]
+                this.sportEventData[field] = seperatedSportEventData[index++]
             }
         }
     }
