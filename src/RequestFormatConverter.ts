@@ -1,33 +1,33 @@
 import SportDataRequestFormat from "./formats/SportDataRequestFormat";
 import {SportDataFormat} from "./formats/SportDataFormat";
+import {score, suitableRequestFormat} from "./utils";
 
 export default class RequestFormatConverter {
 
     private readonly sportEventsDataStorage: Set<SportDataFormat>
-    private sportsDataRequestStorage: Set<SportDataRequestFormat>
-    private sportDataRequest = this.getDefaultSportDataRequestFormat()
+    private sportsDataRequestStorage: Set<suitableRequestFormat> = new Set()
+    private sportDataRequest = this.getInitSportDataRequestFormat()
 
     constructor(sportEventsDataStorage: Set<SportDataFormat>) {
         this.sportEventsDataStorage = sportEventsDataStorage
     }
 
-    executeAndGetResult(): Set<SportDataRequestFormat> {
-        for (const sportData of Object.entries(this.sportEventsDataStorage)) {
-            for (const [fieldName, fieldVal] of Object.entries(sportData)) {3
+    executeAndGetResult(): Set<suitableRequestFormat> {
+        let suitableSportData: suitableRequestFormat
+        for (const sportData of this.sportEventsDataStorage) {
+            for (const [fieldName, fieldVal] of Object.entries(sportData)) {
                 this.addToSportDataRequest(fieldName, fieldVal)
             }
-            this.sportsDataRequestStorage.add(this.sportDataRequest)
+            suitableSportData = { [sportData.id]: this.sportDataRequest }
+            this.sportsDataRequestStorage.add(suitableSportData)
         }
         return this.sportsDataRequestStorage
     }
 
-    private addToSportDataRequest(fieldName: string, fieldVal: string | string[]) {
+    private addToSportDataRequest(fieldName: string, fieldVal: string | Set<score>) {
         switch (fieldName) {
-            case "sportEventStatus":
-                this.handleStatus()
-                break
             case "scores":
-                this.handleScores(fieldVal as string[])
+                this.handleScores(fieldVal as Set<score>)
                 break
             case "homeCompetitor":
                 this.handleHomeCompetitor(fieldVal as string)
@@ -40,13 +40,19 @@ export default class RequestFormatConverter {
         }
     }
 
-    private handleStatus(): void {
-        this.sportDataRequest.status = "LIVE"
-    }
-
-    private handleScores(fieldVal: string[]): void {
-        this.sportDataRequest.scores["CURRENT"].home = fieldVal[0]
-        this.sportDataRequest.scores["CURRENT"].away = fieldVal[1]
+    private handleScores(fieldVal: Set<score>): void {
+        for (const [typeName, typeVal] of Object.entries(fieldVal)) {
+            if (typeName in this.sportDataRequest.scores) {
+                this.sportDataRequest.scores[typeName].home = typeVal.home
+                this.sportDataRequest.scores[typeName].away = typeVal.away
+            } else {
+                this.sportDataRequest.scores[typeName] = {
+                    type: typeVal.type,
+                    home: typeVal.home,
+                    away: typeVal.away
+                }
+            }
+        }
     }
 
     private handleHomeCompetitor(fieldVal: string): void {
@@ -57,16 +63,18 @@ export default class RequestFormatConverter {
         this.sportDataRequest.competitors.AWAY.name = fieldVal
     }
 
-    private getDefaultSportDataRequestFormat(): SportDataRequestFormat {
+    private getInitSportDataRequestFormat(): SportDataRequestFormat {
         return {
             id: '',
             status: "PRE",
-            scores: {},
+            scores: {
+                CURRENT: { type: "CURRENT", home: "0", away: "0" }
+            },
             startTime: '',
             sport: '',
             competitors: {
-                "HOME": { "type": "HOME", "name": '' },
-                "AWAY": { "type": "AWAY", "name": '' },
+                HOME: { type: "HOME", name: '' },
+                AWAY: { type: "AWAY", name: '' },
             },
             competition: ''
         }

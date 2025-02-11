@@ -1,7 +1,13 @@
+import {score} from "../utils";
+
 export interface SportDataFormat {
+    id: string
+
     sport: string
 
     competition: string
+
+    sportEventStatus: string
 
     startTime: string
 
@@ -9,7 +15,5 @@ export interface SportDataFormat {
 
     awayCompetitor: string
 
-    sportEventStatus: string
-
-    scores: string[]
+    scores: Set<score> | {}
 }
