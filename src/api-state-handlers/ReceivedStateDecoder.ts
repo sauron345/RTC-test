@@ -3,7 +3,7 @@ import {getInitSportDataFormat, score, sportEventsStorageFormat} from "../utils"
 
 type mappingsDataFormat = { [encodedField: string]: string }
 
-export default class ResponseStateDecoder {
+export default class ReceivedStateDecoder {
 
     private mappingsData: mappingsDataFormat = {}
     private eventsDataDecodedStorage: sportEventsStorageFormat = {}

@@ -1,6 +1,6 @@
 import {currentScore, score} from "../utils";
 
-export default interface SportDataRequestFormat {
+export default interface SportDataResponseFormat {
     id: string
 
     status: "LIVE" | "REMOVED" | "PRE"

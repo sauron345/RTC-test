@@ -1,7 +1,7 @@
 import {SportDataFormat} from "../formats/SportDataFormat";
 import {getInitSportDataFormat, sportEventsStorageFormat} from "../utils";
 
-export default class ResponseStateExtractor {
+export default class ReceivedStateExtractor {
 
     private sportEventsStorage: sportEventsStorageFormat = {}
     private sportEventData = getInitSportDataFormat()
