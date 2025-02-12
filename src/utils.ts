@@ -1,9 +1,9 @@
 import {SportDataFormat} from "./formats/SportDataFormat";
 import SportDataRequestFormat from "./formats/SportDataRequestFormat";
 
-export type stateDataFormat = { "odds": string }
+export type stateDataFormat = { odds: string }
 
-export type mappingsDataFormat = { "mappings": string }
+export type mappingsDataFormat = { mappings: string }
 
 export type score = {
     [type: string]: { type: string; home: string; away: string }
@@ -17,7 +17,9 @@ export type currentScore = {
     }
 }
 
-export type suitableRequestFormat = { [id: string]: SportDataRequestFormat }
+export type eventsDataRequestStorageFormat = { [id: string]: SportDataRequestFormat }
+
+export type sportEventsStorageFormat = { [id: string]: SportDataFormat }
 
 export function getInitSportDataFormat(): SportDataFormat {
     return {

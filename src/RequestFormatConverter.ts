@@ -1,33 +1,59 @@
 import SportDataRequestFormat from "./formats/SportDataRequestFormat";
+import {score, sportEventsStorageFormat, eventsDataRequestStorageFormat, currentScore} from "./utils";
 import {SportDataFormat} from "./formats/SportDataFormat";
-import {score, suitableRequestFormat} from "./utils";
+
+type SportRequestFieldsFormat = string | Set<score> | "LIVE" | "REMOVED" | "PRE" | Set<score> | currentScore
 
 export default class RequestFormatConverter {
 
-    private readonly sportEventsDataStorage: Set<SportDataFormat>
-    private sportsDataRequestStorage: Set<suitableRequestFormat> = new Set()
-    private sportDataRequest = this.getInitSportDataRequestFormat()
+    private eventsDataRequestStorage: eventsDataRequestStorageFormat = {}
+    private sportEventsDataStorage: sportEventsStorageFormat = {}
+    private eventDataRequest = this.getInitSportDataRequestFormat()
+    private isExecutedOnce = false
 
-    constructor(sportEventsDataStorage: Set<SportDataFormat>) {
+    executeAndGetResult(
+        sportEventsDataStorage: sportEventsStorageFormat
+    ): eventsDataRequestStorageFormat {
+
         this.sportEventsDataStorage = sportEventsDataStorage
+        if (this.isExecutedOnce) {
+            this.updateDynamicEventsFields()
+        } else {
+            this.storeSportEventsData()
+            this.isExecutedOnce = true
+        }
+        return this.eventsDataRequestStorage
     }
 
-    executeAndGetResult(): Set<suitableRequestFormat> {
-        let suitableSportData: suitableRequestFormat
-        for (const sportData of this.sportEventsDataStorage) {
-            for (const [fieldName, fieldVal] of Object.entries(sportData)) {
+    private updateDynamicEventsFields(): void {
+        for (const [eventID, sportEventData] of Object.entries(this.eventsDataRequestStorage)) {
+            for (const [fieldName, fieldVal] of Object.entries(sportEventData)) {
+                if (fieldName === "scores") {
+                    this.eventsDataRequestStorage[eventID].scores =
+                        this.handleScores(this.eventsDataRequestStorage[eventID].scores, fieldVal as Set<score>)
+                } else if (fieldName === "status") {
+                    this.eventsDataRequestStorage[eventID][fieldName] = fieldVal
+                }
+            }
+            this.storeEventDataIfStatusIsNotRemoved(eventID, sportEventData)
+        }
+    }
+
+    private storeSportEventsData() {
+        for (const [eventID, eventSportData] of Object.entries(this.sportEventsDataStorage)) {
+            for (const [fieldName, fieldVal] of Object.entries(eventSportData)) {
                 this.addToSportDataRequest(fieldName, fieldVal)
             }
-            suitableSportData = { [sportData.id]: this.sportDataRequest }
-            this.sportsDataRequestStorage.add(suitableSportData)
+            this.storeEventDataIfStatusIsNotRemoved(eventID, this.eventDataRequest)
+            this.eventDataRequest = this.getInitSportDataRequestFormat()
         }
-        return this.sportsDataRequestStorage
     }
 
-    private addToSportDataRequest(fieldName: string, fieldVal: string | Set<score>) {
+    private addToSportDataRequest(fieldName: string, fieldVal: SportRequestFieldsFormat) {
         switch (fieldName) {
             case "scores":
-                this.handleScores(fieldVal as Set<score>)
+                this.eventDataRequest.scores
+                    = this.handleScores(this.eventDataRequest.scores , fieldVal as Set<score>)
                 break
             case "homeCompetitor":
                 this.handleHomeCompetitor(fieldVal as string)
@@ -35,32 +61,47 @@ export default class RequestFormatConverter {
             case "awayCompetitor":
                 this.handleAwayCompetitor(fieldVal as string)
                 break
+            case "sportEventStatus":
+                this.eventDataRequest.status = fieldVal as "LIVE" | "REMOVED" | "PRE"
+                break
             default:
-                this.sportDataRequest[fieldName] = fieldVal
+                this.eventDataRequest[fieldName] = fieldVal
         }
     }
 
-    private handleScores(fieldVal: Set<score>): void {
+    private storeEventDataIfStatusIsNotRemoved(eventID: string, eventSportData: SportDataRequestFormat) {
+        if (eventSportData.status !== "REMOVED") {
+            this.eventsDataRequestStorage[eventID] = eventSportData
+        } else if (eventID in this.eventsDataRequestStorage) {
+            delete this.eventsDataRequestStorage[eventID]
+        }
+    }
+
+    private handleScores(
+        eventScoresStorage: Set<score> | currentScore, fieldVal: Set<score>
+    ): Set<score> | currentScore {
+
         for (const [typeName, typeVal] of Object.entries(fieldVal)) {
-            if (typeName in this.sportDataRequest.scores) {
-                this.sportDataRequest.scores[typeName].home = typeVal.home
-                this.sportDataRequest.scores[typeName].away = typeVal.away
+            if (typeName in eventScoresStorage) {
+                eventScoresStorage[typeName].home = typeVal.home
+                eventScoresStorage[typeName].away = typeVal.away
             } else {
-                this.sportDataRequest.scores[typeName] = {
+                eventScoresStorage[typeName] = {
                     type: typeVal.type,
                     home: typeVal.home,
                     away: typeVal.away
                 }
             }
         }
+        return eventScoresStorage
     }
 
     private handleHomeCompetitor(fieldVal: string): void {
-        this.sportDataRequest.competitors.HOME.name = fieldVal
+        this.eventDataRequest.competitors.HOME.name = fieldVal
     }
 
     private handleAwayCompetitor(fieldVal: string): void {
-        this.sportDataRequest.competitors.AWAY.name = fieldVal
+        this.eventDataRequest.competitors.AWAY.name = fieldVal
     }
 
     private getInitSportDataRequestFormat(): SportDataRequestFormat {

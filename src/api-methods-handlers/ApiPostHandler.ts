@@ -1,16 +1,16 @@
 import ApiHandler from "./ApiHandler";
 import SportDataRequestFormat from "../formats/SportDataRequestFormat";
-import {suitableRequestFormat} from "../utils";
+import {eventsDataRequestStorageFormat} from "../utils";
 
 export default class ApiPostHandler extends ApiHandler {
 
-    private requestFormatStorage: Set<suitableRequestFormat>
+    private requestFormatStorage: eventsDataRequestStorageFormat
 
     constructor(endpoint: string) {
         super(endpoint)
     }
 
-    pass(requestFormatStorage: Set<suitableRequestFormat>) {
+    pass(requestFormatStorage: eventsDataRequestStorageFormat) {
         this.requestFormatStorage = requestFormatStorage
         this.createRequestObj()
     }
