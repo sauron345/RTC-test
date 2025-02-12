@@ -1,20 +1,17 @@
 import {SportDataFormat} from "../formats/SportDataFormat";
-import {getInitSportDataFormat, score} from "../utils";
+import {getInitSportDataFormat, score, sportEventsStorageFormat} from "../utils";
 
 type mappingsDataFormat = { [encodedField: string]: string }
 
 export default class ResponseStateDecoder {
 
-    private readonly eventsDataEncodedStorage: Set<SportDataFormat>
     private mappingsData: mappingsDataFormat = {}
-    private eventsDataDecodedStorage: Set<SportDataFormat> = new Set()
+    private eventsDataDecodedStorage: sportEventsStorageFormat = {}
+    private eventsEncodedStorage: sportEventsStorageFormat
     private sportEventDecoded = getInitSportDataFormat()
+    private isExecutedOnce = false
 
-    constructor(
-        sportEventsEncodedStorage: Set<SportDataFormat>,
-        mappingsDataStr: string
-    ) {
-        this.eventsDataEncodedStorage = sportEventsEncodedStorage
+    constructor(mappingsDataStr: string) {
         this.extractAndStoreDataFrom(mappingsDataStr)
     }
 
@@ -25,40 +22,70 @@ export default class ResponseStateDecoder {
         }
     }
 
-    executeAndGetResult(): Set<SportDataFormat> {
-        for (const sportEventData of this.eventsDataEncodedStorage) {
+    executeAndGetResultFrom(
+        eventsEncodedStorage: sportEventsStorageFormat
+    ): sportEventsStorageFormat {
+
+        this.eventsEncodedStorage = eventsEncodedStorage
+        if (this.isExecutedOnce) {
+            this.updateDynamicEventsFields()
+        } else {
+            this.storeSportEventsData()
+            this.isExecutedOnce = true
+        }
+        return this.eventsDataDecodedStorage
+    }
+
+    private updateDynamicEventsFields(): void {
+        for (const [eventID, sportEventData] of Object.entries(this.eventsEncodedStorage)) {
             for (const [fieldName, fieldVal] of Object.entries(sportEventData)) {
                 if (fieldName === "scores") {
-                    this.decodeProperlyAndStoreScores(fieldVal as score)
-                } else if (fieldName === "id" || fieldName === "startTime") {
+                    this.eventsDataDecodedStorage[eventID] =
+                        this.decodeProperlyAndStoreScores(this.eventsDataDecodedStorage[eventID], fieldVal as score)
+                } else if (fieldName === "sportEventStatus") {
+                    this.eventsDataDecodedStorage[eventID][fieldName] = this.mappingsData[fieldVal]
+                }
+            }
+        }
+    }
+
+    private storeSportEventsData() {
+        for (const [eventID, sportEventData] of Object.entries(this.eventsEncodedStorage)) {
+            for (const [fieldName, fieldVal] of Object.entries(sportEventData)) {
+                if (fieldName === "scores") {
+                    this.sportEventDecoded =
+                        this.decodeProperlyAndStoreScores(this.sportEventDecoded, fieldVal as score)
+                } else if (fieldName === "startTime") {
+                    this.sportEventDecoded[fieldName] = fieldVal
+                } else if (fieldName === "id") {
                     this.sportEventDecoded[fieldName] = fieldVal
                 } else {
                     this.sportEventDecoded[fieldName] = this.mappingsData[fieldVal]
                 }
             }
-            this.eventsDataDecodedStorage.add(this.sportEventDecoded)
+            this.eventsDataDecodedStorage[eventID] = this.sportEventDecoded
             this.sportEventDecoded = getInitSportDataFormat()
         }
-        return this.eventsDataDecodedStorage
     }
 
-    private decodeProperlyAndStoreScores(fieldVal: score): void {
+    private decodeProperlyAndStoreScores(sportEventDecoded: SportDataFormat,fieldVal: score): SportDataFormat {
         for (const [typeScore, scoreData] of Object.entries(fieldVal)) {
             if (typeScore !== "CURRENT") {
                 let decodedTypeScore = this.mappingsData[typeScore]
-                this.sportEventDecoded.scores[decodedTypeScore] = {
+                sportEventDecoded.scores[decodedTypeScore] = {
                     type: this.mappingsData[scoreData.type],
                     home: scoreData.home,
                     away: scoreData.away
                 }
             } else {
-                this.sportEventDecoded.scores["CURRENT"] = {
+                sportEventDecoded.scores["CURRENT"] = {
                     type: scoreData.type,
                     home: scoreData.home,
                     away: scoreData.away
                 }
             }
         }
+        return sportEventDecoded
     }
 
 }

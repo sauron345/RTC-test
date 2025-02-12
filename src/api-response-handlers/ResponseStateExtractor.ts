@@ -33,11 +33,10 @@ export default class ResponseStateExtractor {
         for (const field of Object.keys(this.sportEventData)) {
             if (field === "id") {
                 this.currentEventID = this.seperatedEventsData[index++]
-                this.sportEventsStorage[this.currentEventID][field] = this.currentEventID
             } else if (field === "scores") {
                 this.sportEventsStorage[this.currentEventID] =
                     this.extractScoreDataFrom(this.sportEventsStorage[this.currentEventID], index)
-            } else if (field === "status") {
+            } else if (field === "sportEventStatus") {
                 this.sportEventsStorage[this.currentEventID][field] = this.seperatedEventsData[index++]
             } else {
                 index++

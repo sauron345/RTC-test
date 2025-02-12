@@ -1,6 +1,5 @@
 import SportDataRequestFormat from "./formats/SportDataRequestFormat";
 import {score, sportEventsStorageFormat, eventsDataRequestStorageFormat, currentScore} from "./utils";
-import {SportDataFormat} from "./formats/SportDataFormat";
 
 type SportRequestFieldsFormat = string | Set<score> | "LIVE" | "REMOVED" | "PRE" | Set<score> | currentScore
 
@@ -26,16 +25,18 @@ export default class RequestFormatConverter {
     }
 
     private updateDynamicEventsFields(): void {
-        for (const [eventID, sportEventData] of Object.entries(this.eventsDataRequestStorage)) {
+        for (const [eventID, sportEventData] of Object.entries(this.sportEventsDataStorage)) {
             for (const [fieldName, fieldVal] of Object.entries(sportEventData)) {
                 if (fieldName === "scores") {
                     this.eventsDataRequestStorage[eventID].scores =
                         this.handleScores(this.eventsDataRequestStorage[eventID].scores, fieldVal as Set<score>)
-                } else if (fieldName === "status") {
-                    this.eventsDataRequestStorage[eventID][fieldName] = fieldVal
+                } else if (fieldName === "sportEventStatus") {
+                    this.eventsDataRequestStorage[eventID].status = fieldVal
                 }
             }
-            this.storeEventDataIfStatusIsNotRemoved(eventID, sportEventData)
+            if (this.eventsDataRequestStorage[eventID].status === "REMOVED") {
+                delete this.eventsDataRequestStorage[eventID]
+            }
         }
     }
 
