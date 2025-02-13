@@ -1,24 +1,23 @@
-import EventDataResponseFormat from "./formats/EventDataResponseFormat";
+import EventDataResponseFormat from "./formats/EventDataResponseFormat.ts";
 import {
     score,
-    eventsEncodedStorageFormat,
-    eventsDataResponseStorageFormat,
+    eventsResponseStorageFormat,
     defaultScore,
     eventsDecodedStorageFormat
-} from "./utils";
+} from "./utils.ts";
 
 type SportResponseFieldsFormat = string | Set<score> | "LIVE" | "REMOVED" | "PRE" | Set<score> | defaultScore
 
 export default class ResponseFormatConverter {
 
-    private eventsDataResponseStorage: eventsDataResponseStorageFormat = {}
+    private eventsDataResponseStorage: eventsResponseStorageFormat = {}
     private sportEventsDataStorage: eventsDecodedStorageFormat = {}
     private eventDataResponse = this.getInitSportDataResponseFormat()
     private isExecutedOnce = false
 
     executeAndGetResult(
         sportEventsDataStorage: eventsDecodedStorageFormat
-    ): eventsDataResponseStorageFormat {
+    ): eventsResponseStorageFormat {
 
         this.sportEventsDataStorage = sportEventsDataStorage
         if (this.isExecutedOnce) {
@@ -44,13 +43,13 @@ export default class ResponseFormatConverter {
         }
     }
 
-    private excludeEventIfFinished(eventID: string) {
+    private excludeEventIfFinished(eventID: string): void {
         if (this.eventsDataResponseStorage[eventID].status === "REMOVED") {
             delete this.eventsDataResponseStorage[eventID]
         }
     }
 
-    private storeSportEventsData() {
+    private storeSportEventsData(): void {
         for (const [eventID, eventSportData] of Object.entries(this.sportEventsDataStorage)) {
             for (const [fieldName, fieldVal] of Object.entries(eventSportData)) {
                 this.addToSportDataResponse(fieldName, fieldVal)
@@ -60,7 +59,7 @@ export default class ResponseFormatConverter {
         }
     }
 
-    private addToSportDataResponse(fieldName: string, fieldVal: SportResponseFieldsFormat) {
+    private addToSportDataResponse(fieldName: string, fieldVal: SportResponseFieldsFormat): void {
         switch (fieldName) {
             case "scores":
                 this.eventDataResponse.scores
@@ -80,7 +79,7 @@ export default class ResponseFormatConverter {
         }
     }
 
-    private storeEventDataIfStatusIsNotRemoved(eventID: string, eventSportData: EventDataResponseFormat) {
+    private storeEventDataIfStatusIsNotRemoved(eventID: string, eventSportData: EventDataResponseFormat): void {
         if (eventSportData.status !== "REMOVED") {
             this.eventsDataResponseStorage[eventID] = eventSportData
         }

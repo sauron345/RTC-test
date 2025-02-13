@@ -1,4 +1,6 @@
-import {score} from "../utils";
+import {score} from "../utils.ts";
+
+type ISO8601DateString = string
 
 export interface DecodedEventDataFormat {
     id: string
@@ -9,7 +11,7 @@ export interface DecodedEventDataFormat {
 
     sportEventStatus: string
 
-    startTime: string
+    startTime: ISO8601DateString
 
     homeCompetitor: string
 

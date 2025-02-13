@@ -1,20 +1,22 @@
-import {defaultScore, score} from "../utils";
+import {score} from "../utils.ts";
 
+type UUIDv4 = string
+type timeInMilliseconds = string
 
 export interface EncodedEventDataFormat {
-    id: string
+    id: UUIDv4
 
-    sportID: string
+    sportID: UUIDv4
 
-    competitionID: string
+    competitionID: UUIDv4
 
-    sportEventStatusID: string
+    sportEventStatusID: UUIDv4
 
-    startTime: string
+    startTime: timeInMilliseconds
 
-    homeCompetitorID: string
+    homeCompetitorID: UUIDv4
 
-    awayCompetitorID: string
+    awayCompetitorID: UUIDv4
 
     scores: Set<score> | {}
 }

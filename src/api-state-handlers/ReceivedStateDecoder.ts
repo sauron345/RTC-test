@@ -1,5 +1,5 @@
-import {DecodedEventDataFormat} from "../formats/DecodedEventDataFormat";
-import {score, eventsEncodedStorageFormat, eventsDecodedStorageFormat} from "../utils";
+import {score, eventsEncodedStorageFormat, eventsDecodedStorageFormat} from "../utils.ts";
+import {DecodedEventDataFormat} from "../formats/DecodedEventDataFormat.ts";
 
 type mappingsDataFormat = { [encodedField: string]: string }
 
@@ -57,7 +57,7 @@ export default class ReceivedStateDecoder {
                     this.sportEventDecoded =
                         this.decodeProperlyAndStoreScores(this.sportEventDecoded, fieldVal as score)
                 } else if (fieldName === "startTime") {
-                    this.sportEventDecoded[fieldName] = fieldVal
+                    this.sportEventDecoded[fieldName] = new Date(Number(fieldVal)).toISOString()
                 } else if (fieldName === "id") {
                     this.sportEventDecoded[fieldName] = fieldVal
                 } else {

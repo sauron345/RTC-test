@@ -1,5 +1,5 @@
-import {eventsEncodedStorageFormat} from "../utils";
-import {EncodedEventDataFormat} from "../formats/EncodedEventDataFormat";
+import {eventsEncodedStorageFormat} from "../utils.ts";
+import {EncodedEventDataFormat} from "../formats/EncodedEventDataFormat.ts";
 
 
 export default class ReceivedStateExtractor {
