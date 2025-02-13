@@ -1,5 +1,4 @@
 import ReceivedStateExtractor from "./api-state-handlers/ReceivedStateExtractor";
-import {DecodedEventDataFormat} from "./formats/DecodedEventDataFormat";
 import ReceivedStateDecoder from "./api-state-handlers/ReceivedStateDecoder";
 import ResponseFormatConverter from "./ResponseFormatConverter";
 import {

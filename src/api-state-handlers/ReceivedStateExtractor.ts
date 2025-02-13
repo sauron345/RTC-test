@@ -59,9 +59,6 @@ export default class ReceivedStateExtractor {
         for (const field of Object.keys(this.sportEventData)) {
             if (field === "scores") {
                 this.sportEventData = this.extractScoreDataFrom(this.sportEventData, index)
-            } else if (field === "startTime") {
-                this.sportEventData.startTime = new Date().toISOString()
-                index++
             } else if (field === "id") {
                 this.currentEventID = this.seperatedEventsData[index++]
                 this.sportEventData[field] = this.currentEventID

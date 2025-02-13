@@ -1,4 +1,4 @@
-import SportDataResponseFormat from "./formats/SportDataResponseFormat";
+import EventDataResponseFormat from "./formats/EventDataResponseFormat";
 import {
     score,
     eventsEncodedStorageFormat,
@@ -80,7 +80,7 @@ export default class ResponseFormatConverter {
         }
     }
 
-    private storeEventDataIfStatusIsNotRemoved(eventID: string, eventSportData: SportDataResponseFormat) {
+    private storeEventDataIfStatusIsNotRemoved(eventID: string, eventSportData: EventDataResponseFormat) {
         if (eventSportData.status !== "REMOVED") {
             this.eventsDataResponseStorage[eventID] = eventSportData
         }
@@ -113,7 +113,7 @@ export default class ResponseFormatConverter {
         this.eventDataResponse.competitors.AWAY.name = fieldVal
     }
 
-    private getInitSportDataResponseFormat(): SportDataResponseFormat {
+    private getInitSportDataResponseFormat(): EventDataResponseFormat {
         return {
             id: '',
             status: "PRE",

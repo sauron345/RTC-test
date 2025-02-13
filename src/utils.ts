@@ -1,5 +1,5 @@
 import {DecodedEventDataFormat} from "./formats/DecodedEventDataFormat";
-import SportDataResponseFormat from "./formats/SportDataResponseFormat";
+import EventDataResponseFormat from "./formats/EventDataResponseFormat";
 import {EncodedEventDataFormat} from "./formats/EncodedEventDataFormat";
 
 export type stateDataFormat = { odds: string }
@@ -18,7 +18,7 @@ export type defaultScore = {
     }
 }
 
-export type eventsDataResponseStorageFormat = { [id: string]: SportDataResponseFormat }
+export type eventsDataResponseStorageFormat = { [id: string]: EventDataResponseFormat }
 
 export type eventsEncodedStorageFormat = { [id: string]: EncodedEventDataFormat }
 

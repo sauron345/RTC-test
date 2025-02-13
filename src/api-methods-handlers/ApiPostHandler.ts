@@ -1,5 +1,4 @@
 import ApiHandler from "./ApiHandler";
-import SportDataResponseFormat from "../formats/SportDataResponseFormat";
 import {eventsDataResponseStorageFormat} from "../utils";
 
 export default class ApiPostHandler extends ApiHandler {
