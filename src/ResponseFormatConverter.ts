@@ -31,20 +31,22 @@ export default class ResponseFormatConverter {
 
     private updateDynamicEventsFields(): void {
         for (const [eventID, sportEventData] of Object.entries(this.sportEventsDataStorage)) {
-            for (const [fieldName, fieldVal] of Object.entries(sportEventData)) {
-                if (fieldName === "scores") {
-                    this.eventsDataResponseStorage[eventID].scores =
-                        this.handleScores(this.eventsDataResponseStorage[eventID].scores, fieldVal as Set<score>)
-                } else if (fieldName === "sportEventStatus") {
-                    this.eventsDataResponseStorage[eventID].status = fieldVal
+            if (eventID in this.eventsDataResponseStorage) {
+                for (const [fieldName, fieldVal] of Object.entries(sportEventData)) {
+                    if (fieldName === "scores") {
+                        this.eventsDataResponseStorage[eventID].scores =
+                            this.handleScores(this.eventsDataResponseStorage[eventID].scores, fieldVal as Set<score>)
+                    } else if (fieldName === "sportEventStatus") {
+                        this.eventsDataResponseStorage[eventID].status = fieldVal
+                    }
                 }
+                this.excludeEventIfFinished(eventID)
             }
-            this.excludeEventIfFinished(eventID)
         }
     }
 
     private excludeEventIfFinished(eventID: string): void {
-        if (this.eventsDataResponseStorage[eventID].status === "REMOVED") {
+        if (eventID in Object.keys(this.eventsDataResponseStorage) && this.eventsDataResponseStorage[eventID].status === "REMOVED") {
             delete this.eventsDataResponseStorage[eventID]
         }
     }

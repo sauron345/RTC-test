@@ -1,0 +1,26 @@
+{
+  "4bb7b78f-6a23-43d0-a61a-1341f03f64e0": {
+    "id": "4bb7b78f-6a23-43d0-a61a-1341f03f64e0",
+    "sport": "FOOTBALL",
+    "competition": "NBA - pre-season",
+    "status": "LIVE",
+    "startTime": "2024-03-08T12:19:40.135Z",
+    "competitors": {
+      "HOME": {
+        "type": "HOME",
+        "name": "Manchester City"
+      },
+      "AWAY": {
+        "type": "AWAY",
+        "name": "Manchester United"
+      }
+    },
+    "scores": {
+      "CURRENT": {
+        "type": "CURRENT",
+        "home": "1",
+        "away": "2"
+      }
+    }
+  }
+}
