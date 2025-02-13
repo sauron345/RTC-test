@@ -1,6 +1,6 @@
 import {score} from "../utils";
 
-export interface SportDataFormat {
+export interface DecodedEventDataFormat {
     id: string
 
     sport: string

@@ -1,11 +1,11 @@
-import {currentScore, score} from "../utils";
+import {defaultScore, score} from "../utils";
 
 export default interface SportDataResponseFormat {
     id: string
 
     status: "LIVE" | "REMOVED" | "PRE"
 
-    scores: Set<score> | currentScore
+    scores: Set<score> | defaultScore
 
     startTime: string
 

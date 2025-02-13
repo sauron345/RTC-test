@@ -1,16 +1,17 @@
-import {SportDataFormat} from "../formats/SportDataFormat";
-import {getInitSportDataFormat, sportEventsStorageFormat} from "../utils";
+import {eventsEncodedStorageFormat} from "../utils";
+import {EncodedEventDataFormat} from "../formats/EncodedEventDataFormat";
+
 
 export default class ReceivedStateExtractor {
 
-    private sportEventsStorage: sportEventsStorageFormat = {}
-    private sportEventData = getInitSportDataFormat()
+    private sportEventsStorage: eventsEncodedStorageFormat = {}
+    private sportEventData = this.getInitEventDataFormat()
     private newEventsStateData: string[]
     private seperatedEventsData: string[]
     private isExecutedOnce = false
     private currentEventID: string
 
-    executeAndGetResult(encodedText: string): sportEventsStorageFormat {
+    executeAndGetResult(encodedText: string): eventsEncodedStorageFormat {
         this.newEventsStateData = encodedText.split('\n')
         if (this.isExecutedOnce) {
             this.updateSportEventsData()
@@ -36,7 +37,7 @@ export default class ReceivedStateExtractor {
             } else if (field === "scores") {
                 this.sportEventsStorage[this.currentEventID] =
                     this.extractScoreDataFrom(this.sportEventsStorage[this.currentEventID], index)
-            } else if (field === "sportEventStatus") {
+            } else if (field === "sportEventStatusID") {
                 this.sportEventsStorage[this.currentEventID][field] = this.seperatedEventsData[index++]
             } else {
                 index++
@@ -49,7 +50,7 @@ export default class ReceivedStateExtractor {
             this.seperatedEventsData = sportEventDataStr.split(',')
             this.assignEventFields()
             this.sportEventsStorage[this.currentEventID] = this.sportEventData
-            this.sportEventData = getInitSportDataFormat()
+            this.sportEventData = this.getInitEventDataFormat()
         }
     }
 
@@ -70,7 +71,7 @@ export default class ReceivedStateExtractor {
         }
     }
 
-    private extractScoreDataFrom(sportEventData: SportDataFormat, index: number): SportDataFormat {
+    private extractScoreDataFrom(sportEventData: EncodedEventDataFormat, index: number): EncodedEventDataFormat {
         if (this.seperatedEventsData[index]) {
             let scoresData = this.seperatedEventsData[index].split('|')
             for (let scoreData of scoresData) {
@@ -84,6 +85,19 @@ export default class ReceivedStateExtractor {
             sportEventData.scores["CURRENT"] = { type: "CURRENT", home: "0", away: "0" }
         }
         return sportEventData
+    }
+
+    private getInitEventDataFormat(): EncodedEventDataFormat {
+        return {
+            id: '',
+            sportID: '',
+            competitionID: '',
+            startTime: '',
+            homeCompetitorID: '',
+            awayCompetitorID: '',
+            sportEventStatusID: '',
+            scores: {}
+        }
     }
 
 }

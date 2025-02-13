@@ -1,17 +1,23 @@
 import SportDataResponseFormat from "./formats/SportDataResponseFormat";
-import {score, sportEventsStorageFormat, eventsDataResponseStorageFormat, currentScore} from "./utils";
+import {
+    score,
+    eventsEncodedStorageFormat,
+    eventsDataResponseStorageFormat,
+    defaultScore,
+    eventsDecodedStorageFormat
+} from "./utils";
 
-type SportResponseFieldsFormat = string | Set<score> | "LIVE" | "REMOVED" | "PRE" | Set<score> | currentScore
+type SportResponseFieldsFormat = string | Set<score> | "LIVE" | "REMOVED" | "PRE" | Set<score> | defaultScore
 
 export default class ResponseFormatConverter {
 
     private eventsDataResponseStorage: eventsDataResponseStorageFormat = {}
-    private sportEventsDataStorage: sportEventsStorageFormat = {}
+    private sportEventsDataStorage: eventsDecodedStorageFormat = {}
     private eventDataResponse = this.getInitSportDataResponseFormat()
     private isExecutedOnce = false
 
     executeAndGetResult(
-        sportEventsDataStorage: sportEventsStorageFormat
+        sportEventsDataStorage: eventsDecodedStorageFormat
     ): eventsDataResponseStorageFormat {
 
         this.sportEventsDataStorage = sportEventsDataStorage
@@ -34,9 +40,13 @@ export default class ResponseFormatConverter {
                     this.eventsDataResponseStorage[eventID].status = fieldVal
                 }
             }
-            if (this.eventsDataResponseStorage[eventID].status === "REMOVED") {
-                delete this.eventsDataResponseStorage[eventID]
-            }
+            this.excludeEventIfFinished(eventID)
+        }
+    }
+
+    private excludeEventIfFinished(eventID: string) {
+        if (this.eventsDataResponseStorage[eventID].status === "REMOVED") {
+            delete this.eventsDataResponseStorage[eventID]
         }
     }
 
@@ -73,14 +83,12 @@ export default class ResponseFormatConverter {
     private storeEventDataIfStatusIsNotRemoved(eventID: string, eventSportData: SportDataResponseFormat) {
         if (eventSportData.status !== "REMOVED") {
             this.eventsDataResponseStorage[eventID] = eventSportData
-        } else if (eventID in this.eventsDataResponseStorage) {
-            delete this.eventsDataResponseStorage[eventID]
         }
     }
 
     private handleScores(
-        eventScoresStorage: Set<score> | currentScore, fieldVal: Set<score>
-    ): Set<score> | currentScore {
+        eventScoresStorage: Set<score> | defaultScore, fieldVal: Set<score>
+    ): Set<score> | defaultScore {
 
         for (const [typeName, typeVal] of Object.entries(fieldVal)) {
             if (typeName in eventScoresStorage) {

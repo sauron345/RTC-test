@@ -1,5 +1,6 @@
-import {SportDataFormat} from "./formats/SportDataFormat";
+import {DecodedEventDataFormat} from "./formats/DecodedEventDataFormat";
 import SportDataResponseFormat from "./formats/SportDataResponseFormat";
+import {EncodedEventDataFormat} from "./formats/EncodedEventDataFormat";
 
 export type stateDataFormat = { odds: string }
 
@@ -9,7 +10,7 @@ export type score = {
     [type: string]: { type: string; home: string; away: string }
 }
 
-export type currentScore = {
+export type defaultScore = {
     CURRENT: {
         type: "CURRENT",
         home: string,
@@ -19,17 +20,6 @@ export type currentScore = {
 
 export type eventsDataResponseStorageFormat = { [id: string]: SportDataResponseFormat }
 
-export type sportEventsStorageFormat = { [id: string]: SportDataFormat }
+export type eventsEncodedStorageFormat = { [id: string]: EncodedEventDataFormat }
 
-export function getInitSportDataFormat(): SportDataFormat {
-    return {
-        id: '',
-        sport: '',
-        competition: '',
-        startTime: '',
-        homeCompetitor: '',
-        awayCompetitor: '',
-        sportEventStatus: '',
-        scores: {}
-    }
-}
+export type eventsDecodedStorageFormat = { [id: string]: DecodedEventDataFormat }

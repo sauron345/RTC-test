@@ -1,8 +1,14 @@
 import ReceivedStateExtractor from "./api-state-handlers/ReceivedStateExtractor";
-import {SportDataFormat} from "./formats/SportDataFormat";
+import {DecodedEventDataFormat} from "./formats/DecodedEventDataFormat";
 import ReceivedStateDecoder from "./api-state-handlers/ReceivedStateDecoder";
 import ResponseFormatConverter from "./ResponseFormatConverter";
-import {mappingsDataFormat, stateDataFormat, eventsDataResponseStorageFormat, sportEventsStorageFormat} from "./utils";
+import {
+    mappingsDataFormat,
+    stateDataFormat,
+    eventsDataResponseStorageFormat,
+    eventsEncodedStorageFormat,
+    eventsDecodedStorageFormat
+} from "./utils";
 import ApiGetHandler from "./api-methods-handlers/ApiGetHandler";
 import ApiPostHandler from "./api-methods-handlers/ApiPostHandler";
 
@@ -14,8 +20,8 @@ let receivedStateExtractor: ReceivedStateExtractor
 let receivedStateDecoder: ReceivedStateDecoder
 let stateDataObj: stateDataFormat[]
 let mappingsDataObj: mappingsDataFormat
-let sportEncodedStorage: sportEventsStorageFormat
-let sportDecodedStorage: sportEventsStorageFormat
+let sportEncodedStorage: eventsEncodedStorageFormat
+let sportDecodedStorage: eventsDecodedStorageFormat
 let decodedStorageConverter: ResponseFormatConverter
 let responseFormatStorage: eventsDataResponseStorageFormat
 
