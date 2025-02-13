@@ -1,4 +1,4 @@
-import {defaultScore, score} from "../utils";
+import {defaultScore, score} from "../utils.ts";
 
 export default interface EventDataResponseFormat {
     id: string
