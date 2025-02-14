@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "type": "module",
   "description": "SR",
-  "main": "index.js",
+  "main": "RTCLauncher.ts",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node --loader ts-node/esm src/RtcLauncher.ts",
     "build": "tsc --project tsconfig.build.json",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "start-with-emulator": "npx concurrently -s first \"node --loader ts-node/esm src/api_emulator/api_server_emulator.ts\" \"npx wait-on http-get://localhost:4000/active && node --loader ts-node/esm src/RtcLauncher.ts\""
   },
   "author": "SR",
   "license": "MIT",
@@ -15,7 +16,10 @@
     "@vitest/coverage-v8": "^1.3.1",
     "express": "^4.21.2",
     "node-fetch": "^3.3.2",
+    "rollup": "^4.34.6",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.2",
-    "vitest": "^1.3.1"
+    "vitest": "^1.3.1",
+    "wait-on": "^8.0.2"
   }
 }
