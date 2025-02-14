@@ -23,7 +23,7 @@ let updatedEventState: stateDataFormat = JSON.parse(updatedEventStateStr)
 const outputStr: string = fs.readFileSync('test/resources/expected_output.json', 'utf8')
 const outputObj: eventsResponseStorageFormat = JSON.parse(outputStr)
 
-describe('processing events states test', () => {
+describe('processing events states to response format test', () => {
 
     it('event with full data', () => {
         let eventID = '4bb7b78f-6a23-43d0-a61a-1341f03f64e0'
@@ -42,14 +42,22 @@ describe('processing events states test', () => {
             expect(undefined).toStrictEqual({});
     });
 
-    it('updated last event scores', () => {
+    describe('updated last event data', () => {
         sportEncodedStorage = receivedStateExtractor.executeAndGetResult(updatedEventState.odds)
         sportDecodedStorage = receivedStateDecoder.executeAndGetResultFrom(sportEncodedStorage)
         responseFormatStorage = decodedStorageConverter.executeAndGetResult(sportDecodedStorage)
 
-        expect(responseFormatStorage['fd903e06-9a7d-423d-8869-1c060cc0b62d'].scores).toStrictEqual({
-            CURRENT: {type: "CURRENT", home: "1", away: "2"}, PERIOD_1: {type: "PERIOD_1", home: "2", away: "3"}}
-        )
+        it('updated scores', () => {
+            expect(responseFormatStorage['fd903e06-9a7d-423d-8869-1c060cc0b62d'].scores).toStrictEqual({
+                    CURRENT: {type: "CURRENT", home: "1", away: "2"}, PERIOD_1: {type: "PERIOD_1", home: "2", away: "3"}
+                }
+            )
+        })
+
+        it('updated status', () => {
+            expect(responseFormatStorage['fd903e06-9a7d-423d-8869-1c060cc0b62d'].status).toStrictEqual("PRE")
+        })
+
     });
 
 })
