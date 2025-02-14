@@ -4,7 +4,7 @@ Before the execution needs to be sure that:
 
 - API program it's alive to avoid errors with connection
 - parameters from **_env.ts_** are steal correct - default values are defined
-- domain of API program is default - **_localhost_**, if not needs to be changed in urls of **_api-handlers_**
+- domain of API program is default - **_localhost_**, it needs to be changed in urls of **_api-handlers_**
 
 After that, use:
 
@@ -21,6 +21,7 @@ an emulator was created in **branch _api-server-emulator_** in directory **_src/
 
 To run the emulator:
 - change branch from **_default branch - master_** to **_api-server-emulator_**
+- keep domain to be **_localhost_** in urls of **_api-handlers_**
 - run using command:
 ```powershell
 npm run start-with-emulator
