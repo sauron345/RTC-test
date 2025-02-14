@@ -5,7 +5,7 @@
   "description": "SR",
   "main": "RTCLauncher.ts",
   "scripts": {
-    "start": "node --loader ts-node/esm src/RtcLauncher.ts",
+    "start": "docker compose up",
     "build": "tsc --project tsconfig.build.json",
     "test": "vitest run --coverage"
   },
