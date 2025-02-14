@@ -5,20 +5,20 @@ import ReceivedStateDecoder from "../src/api-state-handlers/ReceivedStateDecoder
 import ResponseFormatConverter from "../src/ResponseFormatConverter.js";
 import * as fs from "node:fs";
 
-let mappingsDataStr = fs.readFileSync('test/resources/mappings_storage.json', 'utf8')
-let receivedStateDecoder = new ReceivedStateDecoder(JSON.parse(mappingsDataStr).mappings)
-let receivedStateExtractor = new ReceivedStateExtractor()
-let decodedStorageConverter = new ResponseFormatConverter()
+const mappingsDataStr = fs.readFileSync('test/resources/mappings_storage.json', 'utf8')
+const receivedStateDecoder = new ReceivedStateDecoder(JSON.parse(mappingsDataStr).mappings)
+const receivedStateExtractor = new ReceivedStateExtractor()
+const decodedStorageConverter = new ResponseFormatConverter()
 
-let encodedEventStateStr = fs.readFileSync('test/resources/encoded_events_data.json', 'utf8')
-let encodedEventState = JSON.parse(encodedEventStateStr)
+const encodedEventsStateStr = fs.readFileSync('test/resources/encoded_events_data.json', 'utf8')
+const encodedEventsState = JSON.parse(encodedEventsStateStr)
 
-let sportEncodedStorage = receivedStateExtractor.executeAndGetResult(encodedEventState.odds)
+let sportEncodedStorage = receivedStateExtractor.executeAndGetResult(encodedEventsState.odds)
 let sportDecodedStorage = receivedStateDecoder.executeAndGetResultFrom(sportEncodedStorage)
 let responseFormatStorage = decodedStorageConverter.executeAndGetResult(sportDecodedStorage)
 
-let updatedEventStateStr = fs.readFileSync('test/resources/updated_event_data.json', 'utf8')
-let updatedEventState: stateDataFormat = JSON.parse(updatedEventStateStr)
+const updatedEventStateStr = fs.readFileSync('test/resources/updated_event_data.json', 'utf8')
+const updatedEventState: stateDataFormat = JSON.parse(updatedEventStateStr)
 
 const outputStr: string = fs.readFileSync('test/resources/expected_output.json', 'utf8')
 const outputObj: eventsResponseStorageFormat = JSON.parse(outputStr)
