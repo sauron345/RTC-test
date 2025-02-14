@@ -5,3 +5,6 @@ services:
     image: mysteriouscrawler/test
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
+    command: npm run start

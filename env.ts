@@ -1,0 +1,5 @@
+export const env = {
+    RTC_SIMULATION_API_PORT: 4000,
+    RTC_SIMULATION_ROOT_PATH: "/api",
+    RTC_SIMULATION_DURATION_MIN: 5
+}

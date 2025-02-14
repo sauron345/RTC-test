@@ -7,14 +7,12 @@
   "scripts": {
     "start": "node --loader ts-node/esm src/RtcLauncher.ts",
     "build": "tsc --project tsconfig.build.json",
-    "test": "vitest run --coverage",
-    "start-with-emulator": "npx concurrently -s first \"node --loader ts-node/esm src/api_emulator/api_server_emulator.ts\" \"npx wait-on http-get://localhost:4000/active && node --loader ts-node/esm src/RtcLauncher.ts\""
+    "test": "vitest run --coverage"
   },
   "author": "SR",
   "license": "MIT",
   "devDependencies": {
     "@vitest/coverage-v8": "^1.3.1",
-    "express": "^4.21.2",
     "node-fetch": "^3.3.2",
     "rollup": "^4.34.6",
     "ts-node": "^10.9.2",

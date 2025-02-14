@@ -1,18 +1,19 @@
 import {eventsResponseStorageFormat} from "../utils.ts";
 import fetch from 'node-fetch';
+import {env} from "../../env.js";
 
 export default class ResponseSender {
 
     private requestFormatStorage: eventsResponseStorageFormat
-    protected readonly endpoint: string
+    protected readonly url: string
 
     constructor(endpoint: string) {
-        this.endpoint = endpoint
+        this.url = `http://localhost:${env.RTC_SIMULATION_API_PORT}${endpoint}`
     }
 
      async pass(requestFormatStorage: eventsResponseStorageFormat): Promise<void> {
          this.requestFormatStorage = requestFormatStorage
-         await fetch(`http://localhost:4000/${this.endpoint}`, this.getProperParams());
+         await fetch(this.url, this.getProperParams());
      }
 
     private getProperParams(): object {

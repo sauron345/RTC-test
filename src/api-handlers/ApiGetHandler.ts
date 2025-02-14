@@ -1,18 +1,20 @@
+import {env} from "../../env.js";
+
 export default class ApiGetHandler {
 
     private readonly headers = new Headers()
-    private readonly endpoint: string
+    private readonly url: string
     private request: Request
 
     constructor(endpoint: string) {
-        this.endpoint = endpoint
+        this.url = `http://localhost:${env.RTC_SIMULATION_API_PORT}${endpoint}`
         this.headers.set('Content-Type', 'application/json')
         this.headers.set('Accept', 'application/json')
         this.request = this.createRequestObj()
     }
 
     protected createRequestObj() {
-        return new Request(`http://localhost:4000/${this.endpoint}`, this.getProperParams())
+        return new Request(this.url, this.getProperParams())
     }
 
     async fetch(): Promise<object> {

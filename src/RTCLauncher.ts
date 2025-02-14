@@ -4,13 +4,14 @@ import ReceivedStateDecoder from "./api-state-handlers/ReceivedStateDecoder.ts";
 import ResponseFormatConverter from "./ResponseFormatConverter.ts";
 import ApiGetHandler from "./api-handlers/ApiGetHandler.ts";
 import ResponseSender from "./api-handlers/ResponseSender.ts";
+import {env} from "../env.js";
 
 export default class RTCLauncher {
 
-    private readonly stateHandler = new ApiGetHandler('api/state')
-    private readonly mappingsHandler = new ApiGetHandler('api/mappings')
-    private readonly responseSender = new ResponseSender('client/state')
-    private readonly cycleDuration: number = 5 * 60 * 1000; // 5 minutes in milliseconds
+    private readonly stateHandler = new ApiGetHandler(`${env.RTC_SIMULATION_ROOT_PATH}/state`)
+    private readonly mappingsHandler = new ApiGetHandler(`${env.RTC_SIMULATION_ROOT_PATH}/mappings`)
+    private readonly responseSender = new ResponseSender(`/client/state`)
+    private readonly cycleDuration: number = env.RTC_SIMULATION_DURATION_MIN * 60 * 1000; // in milliseconds
     private readonly stateInterval: number = 1000; // 1 second interval for getting new state
     private receivedStateExtractor: ReceivedStateExtractor
     private receivedStateDecoder: ReceivedStateDecoder
